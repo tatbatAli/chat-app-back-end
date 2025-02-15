@@ -107,9 +107,11 @@ app.post("/signIn", async (req, res, next) => {
       sameSite: "strict",
     });
 
-    res.status(201).json({ User_Data: userData, User_Token: userToken });
+    res
+      .status(201)
+      .json({ success: true, User_Data: userData, User_Token: userToken });
   } catch (error) {
-    res.status(400).json({ data: "Page Not found" });
+    res.status(400).json({ success: false, data: "Page Not found" });
     console.log(error);
   }
 });
@@ -180,6 +182,15 @@ app.get("/checkMessages", async (req, res, next) => {
     res.status(200).json({ hasMessages: messagesCount > 0 });
   } catch (error) {
     res.status(404).json({ err: error });
+  }
+});
+
+app.get("/users", async (req, res, next) => {
+  try {
+    const getUser = await User.find({}, "username -_id");
+    res.status(200).json(getUser);
+  } catch (error) {
+    res.status(404).json({ msg: "error fetching user", error });
   }
 });
 
