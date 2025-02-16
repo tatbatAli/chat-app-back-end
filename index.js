@@ -48,7 +48,6 @@ app.use(
 app.post("/", async (req, res, next) => {
   const { user, message, timeOfMessage, dayOfMessage } = req.body;
   if (!user || !message || !timeOfMessage || !dayOfMessage) {
-    console.log("nothing here");
     return res.status(400).json({ msg: "Missing Required Field" });
   }
   try {
@@ -112,14 +111,11 @@ app.post("/signIn", async (req, res, next) => {
       .json({ success: true, User_Data: userData, User_Token: userToken });
   } catch (error) {
     res.status(400).json({ success: false, data: "Page Not found" });
-    console.log(error);
   }
 });
 
 app.post("/token", async (req, res) => {
   const { authToken } = req.body;
-
-  console.log(req.body);
 
   const storedToken = await Token.findOne({ refreshToken: authToken });
   if (!storedToken) {
@@ -127,8 +123,6 @@ app.post("/token", async (req, res) => {
   }
   jwt.verify(authToken, REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) return res.status(400).json({ err: err });
-
-    console.log(user);
 
     const newAccessToken = jwt.sign(
       { username: user.username },
@@ -187,10 +181,25 @@ app.get("/checkMessages", async (req, res, next) => {
 
 app.get("/users", async (req, res, next) => {
   try {
-    const getUser = await User.find({}, "username -_id");
+    const getUser = await User.find({}, "username");
     res.status(200).json(getUser);
   } catch (error) {
     res.status(404).json({ msg: "error fetching user", error });
+  }
+});
+
+app.get("/users/:userId", async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json("user not found");
+    }
+  } catch (error) {
+    res.status(500).json("server error");
   }
 });
 
