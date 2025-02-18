@@ -13,7 +13,7 @@ import Token from "./modules/Tokens.js";
 
 dotenv.config();
 const port = process.env.PORT;
-const allowedOrigins = ["http://localhost:5173", "http://localhost:4000"];
+const allowedOrigins = ["http://localhost:5173"];
 const app = express();
 const server = http.createServer(app);
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
